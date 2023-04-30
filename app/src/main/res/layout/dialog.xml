@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/standard_bottom_sheet"
+        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            >
+
+            <TextView
+                android:paddingTop="20dp"
+                android:shadowRadius="@integer/material_motion_duration_long_2"
+                android:gravity="center"
+                android:textSize="40dp"
+                style="@style/Titles"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Action Dialog"></TextView>
+
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="20dp"
+                app:cardCornerRadius="50dp">
+
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/SaveButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Save Article"
+                    style="@style/DialogButton"
+
+                    android:textSize="22dp"
+                    app:iconSize="40dp"
+                    app:icon="@drawable/ic_baseline_save_alt_24"></com.google.android.material.button.MaterialButton>
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_margin="20dp"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="50dp">
+
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/ShareButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    style="@style/DialogButton"
+
+                    android:textSize="22dp"
+                    app:iconSize="40dp"
+                    android:text="SHARE ARTICLE"
+                    app:icon="@drawable/share"></com.google.android.material.button.MaterialButton>
+
+
+            </androidx.cardview.widget.CardView>
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+
+    </FrameLayout>
+
+</androidx.appcompat.widget.LinearLayoutCompat>

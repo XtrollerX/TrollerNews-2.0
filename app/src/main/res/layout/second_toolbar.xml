@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/secondToolbar"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/toolbarcover"
+        android:layout_width="match_parent"
+
+        android:layout_height="wrap_content">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/topAppBarthesecond"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:visibility="gone"
+            style="@style/Toolbar"
+            android:fitsSystemWindows="true"
+            app:titleCentered="true"
+            android:elevation="30dp">
+            <ImageButton
+
+                android:id="@+id/MenuBackButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style = "@style/Toolbar"
+                android:src="@drawable/backarrow"></ImageButton>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="DEEZNEWS"
+                style = "@style/Titles"
+                android:textSize="25dp"
+                android:layout_gravity="center"></TextView>
+
+        </com.google.android.material.appbar.MaterialToolbar>
+
+    </com.google.android.material.appbar.AppBarLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

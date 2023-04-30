@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    style="@style/RecyclerViewLayoutDarkBackGround"
+    tools:context=".MainActivity">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        app:elevation="0dp">
+
+
+<!--        <com.google.android.material.appbar.MaterialToolbar-->
+<!--            android:id="@+id/toolbar"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="?attr/actionBarSize"-->
+<!--            app:layout_scrollFlags="scroll|enterAlways"-->
+<!--            app:title="@string/app_name"-->
+<!--            app:titleCentered="true"-->
+<!--            app:titleTextColor="?attr/colorOnPrimary" >-->
+<!--            <ImageButton-->
+<!--                android:id="@+id/MenuSavedButton"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_gravity="start"-->
+<!--                android:layout_marginEnd="30dp"-->
+<!--                android:src="@drawable/bookmark"-->
+
+<!--                app:layout_constraintStart_toStartOf="parent"></ImageButton>-->
+
+<!--            <TextView-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:text="DeezNuts"-->
+<!--                android:layout_gravity="center"></TextView>-->
+<!--        </com.google.android.material.appbar.MaterialToolbar>-->
+
+        <include layout="@layout/custom_toolbar"
+            android:id="@+id/customToolbarInclude"
+            ></include>
+
+        <include layout="@layout/second_toolbar"
+            android:id="@+id/secondLayoutInclude"
+            ></include>
+
+<!--        <com.google.android.material.tabs.TabLayout-->
+<!--            android:id="@+id/tab_layout"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:background="?attr/colorPrimary"-->
+<!--            app:tabGravity="center"-->
+
+<!--            app:tabIndicatorFullWidth="false"-->
+<!--            app:tabMaxWidth="0dp"-->
+<!--            app:tabMode="scrollable"-->
+<!--        />-->
+
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+<ProgressBar
+    android:id="@+id/progresBar"
+    android:layout_width="100dp"
+    android:layout_height="100dp"
+    android:layout_gravity="center"></ProgressBar>
+
+    <TextView
+        android:id="@+id/display_error"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:layout_marginHorizontal="10dp"
+        android:layout_marginVertical="200dp"
+        android:textSize="20sp"
+        android:visibility="gone" />
+
+
+    <androidx.fragment.app.FragmentContainerView
+        android:visibility="gone"
+        android:layout_marginTop="60dp"
+        android:id="@+id/nav_host_fragment"
+        android:name="androidx.navigation.fragment.NavHostFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:defaultNavHost="true"
+        app:navGraph="@navigation/nav_graph"
+        ></androidx.fragment.app.FragmentContainerView>
+
+
+
+
+
+
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
