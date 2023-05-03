@@ -8,12 +8,14 @@ import android.os.Build
 import android.os.Build.VERSION_CODES.S
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.ImageButton
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.FragmentContainerView
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
@@ -48,7 +50,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var ProgresBar: ProgressBar
 
-    private var totalRequestCount = 0
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -56,6 +58,7 @@ class MainActivity : AppCompatActivity() {
         val Maintoolbar: Toolbar = findViewById(R.id.MenuToolBar)
         val SecondaryToolbar:Toolbar = findViewById(R.id.topAppBarthesecond)
         val MenuSaved:ImageButton = findViewById(R.id.MenuSavedButton)
+
 
         Maintoolbar.visibility = View.VISIBLE
         SecondaryToolbar.visibility = View.GONE
@@ -89,70 +92,43 @@ class MainActivity : AppCompatActivity() {
         }
 
         // Send request call for news data
-        requestNews(GENERAL, generalNews,"us")
-        requestNews(TECHNOLOGY,TechNews,"us")
-        requestNews(HEALTH,healthNews,"us")
-        requestNews(SPORTS, SportsNews,"us")
-        requestNews(ENTERTAINMENT, EntertainmentNews,"us")
-        requestNews(SCIENCE, ScienceNews,"us")
-        requestNews(BUSINESS, BusinessNews,"us")
+
     }
 //RequestNews function changed from newsData: MutableList<NewsModel>
-    private fun requestNews(newsCategory: String, newsData: MutableList<Article>,country:String) {
-        viewModel.getNews(category = newsCategory, Country = country)?.observe(this) {
-            newsData.addAll(it)
+    suspend private fun requestNews(country:String) {
+        viewModel.getNews( Country = country, BUSINESS, ENTERTAINMENT, GENERAL, HEALTH, SCIENCE, SPORTS,
+            TECHNOLOGY)?.observe(this) {
+
+
+            var totalRequestCount = 0
             totalRequestCount += 1
 
-//             If main fragment loaded then attach the fragment to viewPager
-//            if (newsCategory == GENERAL) {
-//                ProgresBar.visibility = View.GONE
-//                setViewPager()
-//            }
-
-            if(!apiRequestError){
-                if(totalRequestCount == 7){
+            if(isdone == true){
+                if(apiRequestError == false){
                     ProgresBar.visibility = View.GONE
+                    FragmentContainer.visibility = View.VISIBLE
+                }else{
                     ProgresBar.visibility = View.GONE
-                    setViewPager()
+                    FragmentContainer.visibility = View.GONE
+                    val showError: TextView = findViewById(R.id.display_error)
+                    showError.text = errorMessage
+                    showError.visibility = View.VISIBLE
                 }
-
-            }else if(apiRequestError){
+            }else{
                 ProgresBar.visibility = View.GONE
                 FragmentContainer.visibility = View.GONE
                 val showError: TextView = findViewById(R.id.display_error)
-                showError.text = errorMessage
+                showError.text = "There is an unknown error please try again"
                 showError.visibility = View.VISIBLE
             }
 
 
 
 
-//            if(totalRequestCount == 7){
-//                ProgresBar.visibility = View.GONE
-//                setViewPager()
-//            }else{
-//                ProgresBar.visibility = View.GONE
-//                FragmentContainer.visibility = View.GONE
-//                val showError: TextView = findViewById(R.id.display_error)
-//                showError.text = "Server error"
-//                showError.visibility = View.VISIBLE
-//
-//            }
         }
     }
 
-    private fun setViewPager() {
-            if (apiRequestError) {
-                ProgresBar.visibility = View.GONE
-                FragmentContainer.visibility = View.GONE
-                val showError: TextView = findViewById(R.id.display_error)
-                showError.text = errorMessage
-                showError.visibility = View.VISIBLE
-            }
-            else if(!apiRequestError) {
-                FragmentContainer.visibility = View.VISIBLE
-            }
-    }
+
 
 
 
@@ -192,7 +168,8 @@ class MainActivity : AppCompatActivity() {
         var healthNews: MutableList<Article> = mutableListOf()
         var generalNews: MutableList<Article> = mutableListOf()
         var TechNews: MutableList<Article> = mutableListOf()
-        var apiRequestError = false
+        var apiRequestError:Boolean = false
+        var isdone:Boolean = false
         var errorMessage = "error"
         var SocketTimeout: JSONException? = null
     }
