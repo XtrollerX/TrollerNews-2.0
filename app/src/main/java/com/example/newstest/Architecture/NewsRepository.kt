@@ -65,7 +65,7 @@ class NewsRepository(val db:RoomDatabases ) {
                     val jsonObj: JSONObject?
                         jsonObj = response.errorBody()?.string().let { JSONObject(it) }
                         if (jsonObj != null) {
-                            MainActivity.apiRequestError =true
+                            MainActivity.apiRequestError = true
                             MainActivity.errorMessage = jsonObj.getString("message")
                             Newlist.value = mutableListOf<Article>()//
                         }
