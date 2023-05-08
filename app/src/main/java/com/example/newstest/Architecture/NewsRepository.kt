@@ -43,11 +43,11 @@ class NewsRepository(val db:RoomDatabases ) {
 
     fun getNewsCall(country: String, Category: String?): MutableLiveData<MutableList<Article>> {
 //            val call = RetrofitHelper.getInstance().create(NewsApi::class.java)
-//            .getNews("in", Category, "0169333ed3074dccbacd369ae6a3c4ac")
+//            .getNews("in", Category, "0169333ed3074dccbacd369ae6a3c4ac"5a3e054de1834138a2fbc4a75ee69053)
         val call = RetrofitHelper.NewsApiCall.api.getNews(
             country,
             Category,
-            "5a3e054de1834138a2fbc4a75ee69053"
+            "0169333ed3074dccbacd369ae6a3c4ac"
         )
         var Newlist = MutableLiveData<MutableList<Article>>()
 

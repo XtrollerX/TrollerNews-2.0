@@ -16,6 +16,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.FragmentContainerView
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import com.example.newstest.Adapter.FragmentAdapter
 import com.example.newstest.Architecture.NewsViewModel
@@ -31,6 +32,7 @@ import com.example.newstest.Constants.TECHNOLOGY
 import com.example.newstest.Constants.TOTAL_NEWS_TAB
 import com.example.newstest.Database.RoomDatabases
 import com.example.newstest.retrofit.Article
+import kotlinx.coroutines.*
 import org.json.JSONException
 import java.net.SocketTimeoutException
 
@@ -89,34 +91,32 @@ class MainActivity : AppCompatActivity() {
         }
 
         // Send request call for news data
-        requestNews(GENERAL, generalNews,"us")
-        requestNews(TECHNOLOGY,TechNews,"us")
-        requestNews(HEALTH,healthNews,"us")
-        requestNews(SPORTS, SportsNews,"us")
-        requestNews(ENTERTAINMENT, EntertainmentNews,"us")
-        requestNews(SCIENCE, ScienceNews,"us")
-        requestNews(BUSINESS, BusinessNews,"us")
+        lifecycleScope.launch(Dispatchers.Main) {
+            requestNews(GENERAL, generalNews, "us")
+            requestNews(TECHNOLOGY, TechNews, "us")
+            requestNews(HEALTH, healthNews, "us")
+            requestNews(SPORTS, SportsNews, "us")
+            requestNews(ENTERTAINMENT, EntertainmentNews, "us")
+            requestNews(SCIENCE, ScienceNews, "us")
+            requestNews(BUSINESS, BusinessNews, "us")
+        }
+
     }
 //RequestNews function changed from newsData: MutableList<NewsModel>
-    private fun requestNews(newsCategory: String, newsData: MutableList<Article>,country:String) {
+    suspend private fun requestNews(newsCategory: String, newsData: MutableList<Article>,country:String) {
         viewModel.getNews(category = newsCategory, Country = country)?.observe(this) {
             newsData.addAll(it)
             totalRequestCount += 1
 
-//             If main fragment loaded then attach the fragment to viewPager
-//            if (newsCategory == GENERAL) {
-//                ProgresBar.visibility = View.GONE
-//                setViewPager()
-//            }
-
-            if(!apiRequestError){
-                if(totalRequestCount == 7){
-                    ProgresBar.visibility = View.GONE
-                    ProgresBar.visibility = View.GONE
-                    setViewPager()
-                }
-
-            }else if(apiRequestError){
+            lifecycleScope.launch(Dispatchers.Main) {
+try {
+    withTimeout(8000) {
+        if (ScienceNews.isNotEmpty() && BusinessNews.isNotEmpty() && EntertainmentNews.isNotEmpty() && generalNews.isNotEmpty() && healthNews.isNotEmpty() && SportsNews.isNotEmpty() && TechNews.isNotEmpty()) {
+            if (!apiRequestError) {
+                ProgresBar.visibility = View.GONE
+                ProgresBar.visibility = View.GONE
+                setViewPager()
+            } else if (apiRequestError) {
                 ProgresBar.visibility = View.GONE
                 FragmentContainer.visibility = View.GONE
                 val showError: TextView = findViewById(R.id.display_error)
@@ -124,20 +124,22 @@ class MainActivity : AppCompatActivity() {
                 showError.visibility = View.VISIBLE
             }
 
-
-
-
-//            if(totalRequestCount == 7){
-//                ProgresBar.visibility = View.GONE
-//                setViewPager()
-//            }else{
-//                ProgresBar.visibility = View.GONE
-//                FragmentContainer.visibility = View.GONE
-//                val showError: TextView = findViewById(R.id.display_error)
-//                showError.text = "Server error"
-//                showError.visibility = View.VISIBLE
-//
-//            }
+        } else if (apiRequestError) {
+            ProgresBar.visibility = View.GONE
+            FragmentContainer.visibility = View.GONE
+            val showError: TextView = findViewById(R.id.display_error)
+            showError.text = errorMessage
+            showError.visibility = View.VISIBLE
+        }
+    }
+}catch (e: TimeoutCancellationException){
+    ProgresBar.visibility = View.GONE
+    FragmentContainer.visibility = View.GONE
+    val showError: TextView = findViewById(R.id.display_error)
+    showError.text = "There has been an error, please restart the app"
+    showError.visibility = View.VISIBLE
+}
+            }
         }
     }
 
