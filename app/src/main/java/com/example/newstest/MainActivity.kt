@@ -8,6 +8,7 @@ import android.os.Build
 import android.os.Build.VERSION_CODES.S
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.ImageButton
 import android.widget.ProgressBar
@@ -55,6 +56,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         // Set Action Bar
+
         val Maintoolbar: Toolbar = findViewById(R.id.MenuToolBar)
         val SecondaryToolbar:Toolbar = findViewById(R.id.topAppBarthesecond)
         val MenuSaved:ImageButton = findViewById(R.id.MenuSavedButton)
@@ -89,18 +91,20 @@ class MainActivity : AppCompatActivity() {
             showError.setText("Internet not avaialable ")
             showError.visibility = View.VISIBLE
         }
+        SocketTimeout()
+        Log.d("err_msg", "MainActivty.apiRequestError value IN mAIN ${MainActivity.apiRequestError}")
 
         // Send request call for news data
         lifecycleScope.launch(Dispatchers.Main) {
+            Log.d("MainActivity","Answer $apiRequestError " )
             requestNews(GENERAL, generalNews, "us")
-            requestNews(TECHNOLOGY, TechNews, "us")
-            requestNews(HEALTH, healthNews, "us")
-            requestNews(SPORTS, SportsNews, "us")
-            requestNews(ENTERTAINMENT, EntertainmentNews, "us")
-            requestNews(SCIENCE, ScienceNews, "us")
-            requestNews(BUSINESS, BusinessNews, "us")
+//            requestNews(TECHNOLOGY, TechNews, "us")
+//            requestNews(HEALTH, healthNews, "us")
+//            requestNews(SPORTS, SportsNews, "us")
+//            requestNews(ENTERTAINMENT, EntertainmentNews, "us")
+//            requestNews(SCIENCE, ScienceNews, "us")
+//            requestNews(BUSINESS, BusinessNews, "us")
         }
-
     }
 //RequestNews function changed from newsData: MutableList<NewsModel>
     suspend private fun requestNews(newsCategory: String, newsData: MutableList<Article>,country:String) {
@@ -109,14 +113,17 @@ class MainActivity : AppCompatActivity() {
             totalRequestCount += 1
 
             lifecycleScope.launch(Dispatchers.Main) {
-try {
-    withTimeout(8000) {
+
+
         if (ScienceNews.isNotEmpty() && BusinessNews.isNotEmpty() && EntertainmentNews.isNotEmpty() && generalNews.isNotEmpty() && healthNews.isNotEmpty() && SportsNews.isNotEmpty() && TechNews.isNotEmpty()) {
-            if (!apiRequestError) {
+            Log.d("MainActivity","Answer $OnSocketTimeOut 1" )
+            if (apiRequestError == false) {
+                Log.d("MainActivity","Answer $OnSocketTimeOut 2" )
                 ProgresBar.visibility = View.GONE
-                ProgresBar.visibility = View.GONE
-                setViewPager()
-            } else if (apiRequestError) {
+                FragmentContainer.visibility = View.VISIBLE
+
+            } else if (apiRequestError == true) {
+                Log.d("MainActivity","Answer $OnSocketTimeOut 3" )
                 ProgresBar.visibility = View.GONE
                 FragmentContainer.visibility = View.GONE
                 val showError: TextView = findViewById(R.id.display_error)
@@ -124,36 +131,16 @@ try {
                 showError.visibility = View.VISIBLE
             }
 
-        } else if (apiRequestError) {
+        } else if (apiRequestError == true) {
+            Log.d("MainActivity","Answer $OnSocketTimeOut 4" )
             ProgresBar.visibility = View.GONE
             FragmentContainer.visibility = View.GONE
             val showError: TextView = findViewById(R.id.display_error)
             showError.text = errorMessage
             showError.visibility = View.VISIBLE
         }
-    }
-}catch (e: TimeoutCancellationException){
-    ProgresBar.visibility = View.GONE
-    FragmentContainer.visibility = View.GONE
-    val showError: TextView = findViewById(R.id.display_error)
-    showError.text = "There has been an error, please restart the app"
-    showError.visibility = View.VISIBLE
-}
             }
         }
-    }
-
-    private fun setViewPager() {
-            if (apiRequestError) {
-                ProgresBar.visibility = View.GONE
-                FragmentContainer.visibility = View.GONE
-                val showError: TextView = findViewById(R.id.display_error)
-                showError.text = errorMessage
-                showError.visibility = View.VISIBLE
-            }
-            else if(!apiRequestError) {
-                FragmentContainer.visibility = View.VISIBLE
-            }
     }
 
 
@@ -183,6 +170,19 @@ try {
         return false
     }
 
+    private fun SocketTimeout(){
+        Log.d("MainActivitySocketFunction","Answer $OnSocketTimeOut")
+        if(OnSocketTimeOut == true){
+            ProgresBar.visibility = View.GONE
+            FragmentContainer.visibility = View.GONE
+            val showError: TextView = findViewById(R.id.display_error)
+            showError.text = errorMessage
+            showError.visibility = View.VISIBLE
+
+        }
+    }
+
+
 
 
     companion object{
@@ -196,6 +196,7 @@ try {
         var TechNews: MutableList<Article> = mutableListOf()
         var apiRequestError = false
         var errorMessage = "error"
+        var OnSocketTimeOut = false
         var SocketTimeout: JSONException? = null
     }
 }

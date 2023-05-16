@@ -8,6 +8,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.converter.moshi.MoshiConverterFactory
+import java.util.concurrent.TimeUnit
 
 object RetrofitHelper {
 
@@ -15,6 +16,7 @@ object RetrofitHelper {
 
     private fun httpclient(): OkHttpClient {
         val builder = OkHttpClient.Builder()
+            .connectTimeout(10,TimeUnit.MILLISECONDS).readTimeout(10,TimeUnit.MILLISECONDS)
 
         builder.addInterceptor(HttpLoggingInterceptor().apply {
             setLevel(HttpLoggingInterceptor.Level.BODY)

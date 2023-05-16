@@ -1,6 +1,7 @@
 import android.content.Context
 import android.telecom.CallScreeningService
 import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
 import com.example.newstest.MainActivity
 import com.example.newstest.retrofit.*
@@ -42,8 +43,6 @@ class NewsRepository(val db:RoomDatabases ) {
 
 
     fun getNewsCall(country: String, Category: String?): MutableLiveData<MutableList<Article>> {
-//            val call = RetrofitHelper.getInstance().create(NewsApi::class.java)
-//            .getNews("in", Category, "0169333ed3074dccbacd369ae6a3c4ac"5a3e054de1834138a2fbc4a75ee69053)
         val call = RetrofitHelper.NewsApiCall.api.getNews(
             country,
             Category,
@@ -52,10 +51,12 @@ class NewsRepository(val db:RoomDatabases ) {
         var Newlist = MutableLiveData<MutableList<Article>>()
 
         call.enqueue(object : Callback<NewsDataFromJson> {
+
             override fun onResponse(
                 call: Call<NewsDataFromJson>,
                 response: Response<NewsDataFromJson>
             ) {
+
                 if (response.isSuccessful) {
                     val body = response.body()
                     if (body != null) {
@@ -73,9 +74,11 @@ class NewsRepository(val db:RoomDatabases ) {
             }
 
             override fun onFailure(call: Call<NewsDataFromJson>, t: Throwable) {
+
                 MainActivity.apiRequestError = true
+                Log.d("err_msg", "MainActivty.apiRequestError value ${MainActivity.apiRequestError}")
+                Log.d("err_msg", "msg ${t.message}")
                 MainActivity.errorMessage = t.localizedMessage as String
-                Log.d("err_msg", "msg" + t.localizedMessage)
             }
 
         })
