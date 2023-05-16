@@ -98,12 +98,12 @@ class MainActivity : AppCompatActivity() {
         lifecycleScope.launch(Dispatchers.Main) {
             Log.d("MainActivity","Answer $apiRequestError " )
             requestNews(GENERAL, generalNews, "us")
-//            requestNews(TECHNOLOGY, TechNews, "us")
-//            requestNews(HEALTH, healthNews, "us")
-//            requestNews(SPORTS, SportsNews, "us")
-//            requestNews(ENTERTAINMENT, EntertainmentNews, "us")
-//            requestNews(SCIENCE, ScienceNews, "us")
-//            requestNews(BUSINESS, BusinessNews, "us")
+            requestNews(TECHNOLOGY, TechNews, "us")
+            requestNews(HEALTH, healthNews, "us")
+            requestNews(SPORTS, SportsNews, "us")
+            requestNews(ENTERTAINMENT, EntertainmentNews, "us")
+            requestNews(SCIENCE, ScienceNews, "us")
+            requestNews(BUSINESS, BusinessNews, "us")
         }
     }
 //RequestNews function changed from newsData: MutableList<NewsModel>
