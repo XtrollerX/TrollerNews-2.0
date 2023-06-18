@@ -1,6 +1,7 @@
 package com.example.newstest
 
 import NewsRepository
+import android.app.Application
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
@@ -10,11 +11,12 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.ImageButton
-import android.widget.ProgressBar
-import android.widget.TextView
+import android.widget.*
 import androidx.appcompat.widget.Toolbar
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.FragmentContainerView
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -22,6 +24,8 @@ import androidx.navigation.findNavController
 import com.example.newstest.Adapter.FragmentAdapter
 import com.example.newstest.Architecture.NewsViewModel
 import com.example.newstest.Architecture.NewsViewModelProviderFactory
+
+
 import com.example.newstest.Constants.BUSINESS
 import com.example.newstest.Constants.ENTERTAINMENT
 import com.example.newstest.Constants.GENERAL
@@ -32,9 +36,13 @@ import com.example.newstest.Constants.SPORTS
 import com.example.newstest.Constants.TECHNOLOGY
 import com.example.newstest.Constants.TOTAL_NEWS_TAB
 import com.example.newstest.Database.RoomDatabases
+import com.example.newstest.ExtraPackage.ErrorHandling
 import com.example.newstest.retrofit.Article
+import com.example.newstest.retrofit.NewsDataFromJson
+import com.google.android.material.button.MaterialButton
 import kotlinx.coroutines.*
 import org.json.JSONException
+import java.net.Socket
 import java.net.SocketTimeoutException
 
 class MainActivity : AppCompatActivity() {
@@ -43,13 +51,16 @@ class MainActivity : AppCompatActivity() {
         ENTERTAINMENT, SCIENCE,
         SPORTS, TECHNOLOGY, HEALTH
     )
-    private lateinit var FragmentContainer:FragmentContainerView
+    private lateinit var FragmentContainer: FragmentContainerView
     lateinit var viewModel: NewsViewModel
-//    private lateinit var tabLayout: TabLayout
-//    private lateinit var viewPager: ViewPager2
+
+
     private lateinit var fragmentAdapter: FragmentAdapter
 
-    private lateinit var ProgresBar: ProgressBar
+
+
+
+
 
     private var totalRequestCount = 0
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -58,14 +69,11 @@ class MainActivity : AppCompatActivity() {
         // Set Action Bar
 
         val Maintoolbar: Toolbar = findViewById(R.id.MenuToolBar)
-        val SecondaryToolbar:Toolbar = findViewById(R.id.topAppBarthesecond)
-        val MenuSaved:ImageButton = findViewById(R.id.MenuSavedButton)
+        val SecondaryToolbar: Toolbar = findViewById(R.id.topAppBarthesecond)
+        val MenuSaved: ImageButton = findViewById(R.id.MenuSavedButton)
 
         Maintoolbar.visibility = View.VISIBLE
         SecondaryToolbar.visibility = View.GONE
-
-
-
 
 
 
@@ -74,129 +82,69 @@ class MainActivity : AppCompatActivity() {
 
         }
 
-        ProgresBar = findViewById(R.id.progresBar)
+
         FragmentContainer = findViewById(R.id.nav_host_fragment)
 
         val newsRepository = NewsRepository(RoomDatabases(this))
-        val viewModelProviderFactory = NewsViewModelProviderFactory(newsRepository)
-        viewModel = ViewModelProvider(this,viewModelProviderFactory)[NewsViewModel::class.java]
+        val viewModelProviderFactory = NewsViewModelProviderFactory(Application(),newsRepository)
+        viewModel = ViewModelProvider(this, viewModelProviderFactory)[NewsViewModel::class.java]
 
         supportActionBar?.setDisplayShowTitleEnabled(false)
 
 
-        if (!isNetworkAvailable(applicationContext)) {
-            FragmentContainer.visibility = View.GONE
-            ProgresBar.visibility = View.GONE
-            val showError: TextView = findViewById(R.id.display_error)
-            showError.setText("Internet not avaialable ")
-            showError.visibility = View.VISIBLE
-        }
-        SocketTimeout()
-        Log.d("err_msg", "MainActivty.apiRequestError value IN mAIN ${MainActivity.apiRequestError}")
+
+
 
         // Send request call for news data
+        NewsInitiation()
+
+
+
+
+
+    }
+
+
+
+    //Initiating Api Calls
+    fun NewsInitiation() {
         lifecycleScope.launch(Dispatchers.Main) {
-            Log.d("MainActivity","Answer $apiRequestError " )
-            requestNews(GENERAL, generalNews, "us")
-            requestNews(TECHNOLOGY, TechNews, "us")
-            requestNews(HEALTH, healthNews, "us")
-            requestNews(SPORTS, SportsNews, "us")
-            requestNews(ENTERTAINMENT, EntertainmentNews, "us")
-            requestNews(SCIENCE, ScienceNews, "us")
-            requestNews(BUSINESS, BusinessNews, "us")
-        }
-    }
-//RequestNews function changed from newsData: MutableList<NewsModel>
-    suspend private fun requestNews(newsCategory: String, newsData: MutableList<Article>,country:String) {
-        viewModel.getNews(category = newsCategory, Country = country)?.observe(this) {
-            newsData.addAll(it)
-            totalRequestCount += 1
+            Log.d("MainActivity", " Inititation ")
 
-            lifecycleScope.launch(Dispatchers.Main) {
-
-
-        if (ScienceNews.isNotEmpty() && BusinessNews.isNotEmpty() && EntertainmentNews.isNotEmpty() && generalNews.isNotEmpty() && healthNews.isNotEmpty() && SportsNews.isNotEmpty() && TechNews.isNotEmpty()) {
-            Log.d("MainActivity","Answer $OnSocketTimeOut 1" )
-            if (apiRequestError == false) {
-                Log.d("MainActivity","Answer $OnSocketTimeOut 2" )
-                ProgresBar.visibility = View.GONE
-                FragmentContainer.visibility = View.VISIBLE
-
-            } else if (apiRequestError == true) {
-                Log.d("MainActivity","Answer $OnSocketTimeOut 3" )
-                ProgresBar.visibility = View.GONE
-                FragmentContainer.visibility = View.GONE
-                val showError: TextView = findViewById(R.id.display_error)
-                showError.text = errorMessage
-                showError.visibility = View.VISIBLE
-            }
-
-        } else if (apiRequestError == true) {
-            Log.d("MainActivity","Answer $OnSocketTimeOut 4" )
-            ProgresBar.visibility = View.GONE
-            FragmentContainer.visibility = View.GONE
-            val showError: TextView = findViewById(R.id.display_error)
-            showError.text = errorMessage
-            showError.visibility = View.VISIBLE
-        }
-            }
+            viewModel.getNews("us", GENERAL, viewModel.GeneralNews)
+            viewModel.getNews("us", BUSINESS, viewModel.BusinessNews)
+            viewModel.getNews("us", ENTERTAINMENT, viewModel.EntertainmentNews)
+            viewModel.getNews("us", HEALTH, viewModel.HealthNews)
+            viewModel.getNews("us", SCIENCE, viewModel.ScienceNews)
+            viewModel.getNews("us", SPORTS, viewModel.SportsNews)
+            viewModel.getNews("us", TECHNOLOGY, viewModel.TechNews)
         }
     }
 
 
 
-    // Check internet connection
-    private fun isNetworkAvailable(context: Context): Boolean {
-        val connectivityManager =
-            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
-        // For 29 api or above
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            val capabilities =
-                connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
-                    ?: return false
-            return when {
-                capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
-                capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> true
-                capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
-                else -> false
-            }
-        } else {
-            // For below 29 api
-            if (connectivityManager.activeNetworkInfo != null && connectivityManager.activeNetworkInfo!!.isConnectedOrConnecting) {
-                return true
-            }
-        }
-        return false
-    }
 
-    private fun SocketTimeout(){
-        Log.d("MainActivitySocketFunction","Answer $OnSocketTimeOut")
-        if(OnSocketTimeOut == true){
-            ProgresBar.visibility = View.GONE
-            FragmentContainer.visibility = View.GONE
-            val showError: TextView = findViewById(R.id.display_error)
-            showError.text = errorMessage
-            showError.visibility = View.VISIBLE
 
-        }
-    }
+
+
+
+
 
 
 
 
     companion object{
         //var generalNews changed from ArrayList<NewsModel>
+        var DoneLoading:Int = 0
         var ScienceNews: MutableList<Article> = mutableListOf()
         var EntertainmentNews: MutableList<Article> = mutableListOf()
         var SportsNews: MutableList<Article> = mutableListOf()
         var BusinessNews: MutableList<Article> = mutableListOf()
-        var healthNews: MutableList<Article> = mutableListOf()
-        var generalNews: MutableList<Article> = mutableListOf()
+        var HealthNews: MutableList<Article> = mutableListOf()
+        var GeneralNews: MutableList<Article> = mutableListOf()
         var TechNews: MutableList<Article> = mutableListOf()
-        var apiRequestError = false
-        var errorMessage = "error"
-        var OnSocketTimeOut = false
-        var SocketTimeout: JSONException? = null
+        var errorMessage:String? = "error"
+        var isError = 0
     }
 }

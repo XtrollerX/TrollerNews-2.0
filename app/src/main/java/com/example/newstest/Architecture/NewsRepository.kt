@@ -36,54 +36,15 @@ class NewsRepository(val db:RoomDatabases ) {
 
     suspend fun deleteArticle(article: Article) = db.getArticleDao().deleteArticle(article)
 
+
+
     suspend fun empty() = db.getArticleDao().isEmpty()
 
     suspend fun nukeTable() = db.getArticleDao().nukeTable()
 
 
 
-    fun getNewsCall(country: String, Category: String?): MutableLiveData<MutableList<Article>> {
-        val call = RetrofitHelper.NewsApiCall.api.getNews(
-            country,
-            Category,
-            "0169333ed3074dccbacd369ae6a3c4ac"
-        )
-        var Newlist = MutableLiveData<MutableList<Article>>()
 
-        call.enqueue(object : Callback<NewsDataFromJson> {
-
-            override fun onResponse(
-                call: Call<NewsDataFromJson>,
-                response: Response<NewsDataFromJson>
-            ) {
-
-                if (response.isSuccessful) {
-                    val body = response.body()
-                    if (body != null) {
-                        Newlist.value = body.articles
-                    }
-                } else {
-                    val jsonObj: JSONObject?
-                        jsonObj = response.errorBody()?.string().let { JSONObject(it) }
-                        if (jsonObj != null) {
-                            MainActivity.apiRequestError = true
-                            MainActivity.errorMessage = jsonObj.getString("message")
-                            Newlist.value = mutableListOf<Article>()//
-                        }
-                }
-            }
-
-            override fun onFailure(call: Call<NewsDataFromJson>, t: Throwable) {
-
-                MainActivity.apiRequestError = true
-                Log.d("err_msg", "MainActivty.apiRequestError value ${MainActivity.apiRequestError}")
-                Log.d("err_msg", "msg ${t.message}")
-                MainActivity.errorMessage = t.localizedMessage as String
-            }
-
-        })
-        return Newlist
-    }
 }
 
 

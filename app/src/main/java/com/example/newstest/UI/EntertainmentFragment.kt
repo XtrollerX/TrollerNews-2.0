@@ -3,18 +3,25 @@ package com.example.newstest.UI
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.ProgressBar
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.widget.AppCompatImageButton
 import androidx.browser.customtabs.CustomTabsIntent
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.newsappenqueue.Adapters.NewsAdapter
 import com.example.newstest.Architecture.NewsViewModel
 import com.example.newstest.Constants
+import com.example.newstest.ExtraPackage.ErrorHandling
 import com.example.newstest.MainActivity
 import com.example.newstest.R
 import com.example.newstest.retrofit.Article
@@ -44,6 +51,11 @@ class EntertainmentFragment : Fragment(R.layout.fragment_entertainment) {
     private lateinit var newsDataForDown: List<Article>
     var position = Constants.INITIAL_POSITION
 
+    lateinit var ProgressBar: ProgressBar
+
+    lateinit var errorDialog: ConstraintLayout
+    lateinit var SocketErrorButton: Button
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -53,15 +65,41 @@ class EntertainmentFragment : Fragment(R.layout.fragment_entertainment) {
         recyclerView = view.findViewById(R.id.recyclerView)
         viewModel = (activity as MainActivity).viewModel
         recyclerView.layoutManager = layoutManager
+        ProgressBar = view.findViewById(R.id.progresBar)
+        errorDialog = view.findViewById(R.id.SocketError)
+        SocketErrorButton = view.findViewById(R.id.refreshbutton)
 
-        // Setting recyclerViews adapter
-        //for the newsDatafordown add .slice(TOP_HEADLINES_COUNT until MainActivity.generalNews.size - TOP_HEADLINES_COUNT)
-//        newsDataForDown = MainActivity.EntertainmentNews.slice(Constants.TOP_HEADLINES_COUNT until MainActivity.TechNews.size - Constants.TOP_HEADLINES_COUNT)
+
         adapter = NewsAdapter()
         recyclerView.adapter = adapter
         adapter.differ.submitList(MainActivity.EntertainmentNews)
         Initialising_Dialog()
         RecyclerView_OnClickListener()
+        EntertainementNewsObserver()
+    }
+
+    fun EntertainementNewsObserver(){
+        Log.d("MainActivity"," General " )
+        viewModel.EntertainmentNews.observe(viewLifecycleOwner, Observer {
+            if(it is ErrorHandling.Success){
+                it.data?.let {
+                    adapter.differ.submitList(it.articles)
+                    ProgressBar.visibility = View.GONE
+                    recyclerView.visibility = View.VISIBLE
+                    errorDialog.visibility = View.GONE
+
+                }
+            }
+            else if (it is ErrorHandling.Error){
+                ProgressBar.visibility = View.GONE
+                recyclerView.visibility = View.GONE
+                errorDialog.visibility = View.VISIBLE
+                SocketErrorButton.setOnClickListener {
+                    Toast.makeText(requireActivity(),"Reloading Requests",Toast.LENGTH_LONG).show()
+                }
+
+            }
+        })
     }
 
     fun Initialising_Dialog(){

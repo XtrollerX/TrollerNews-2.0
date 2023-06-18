@@ -50,5 +50,16 @@
         <item name="android:fontFamily">@font/inter_black</item>
     </style>
 
+    <style name="ErrorImageView">
+        <item name="android:tint">@color/status_bar_grey</item>
+    </style>
+
+    <style name="ErrorTextView">
+        <item name="android:textColor">@color/status_bar_grey</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:fontFamily">@font/inter_black</item>
+    </style>
+
+
 
 </resources>

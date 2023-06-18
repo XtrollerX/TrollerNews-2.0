@@ -7,7 +7,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.example.newstest.Constants.TOTAL_NEWS_TAB
 import com.example.newstest.MainActivity
-import com.example.newstest.MainActivity.Companion.healthNews
+
 import com.example.newstest.UI.*
 
 class FragmentAdapter(fm: FragmentManager, lifecycle: Lifecycle) : FragmentStateAdapter(fm, lifecycle){

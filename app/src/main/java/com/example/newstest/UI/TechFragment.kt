@@ -6,15 +6,21 @@ import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.Button
+import android.widget.ProgressBar
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.widget.AppCompatImageButton
 import androidx.browser.customtabs.CustomTabsIntent
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.newsappenqueue.Adapters.NewsAdapter
 import com.example.newstest.Architecture.NewsViewModel
 import com.example.newstest.Constants
+import com.example.newstest.ExtraPackage.ErrorHandling
 import com.example.newstest.MainActivity
 import com.example.newstest.R
 import com.example.newstest.retrofit.Article
@@ -35,6 +41,11 @@ class TechFragment: Fragment(R.layout.techfragment) {
     private lateinit var newsDataForDownTech: List<Article>
     var position = Constants.INITIAL_POSITION
 
+    lateinit var ProgressBar:ProgressBar
+
+    lateinit var errorDialog: ConstraintLayout
+    lateinit var SocketErrorButton: Button
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -45,17 +56,42 @@ class TechFragment: Fragment(R.layout.techfragment) {
         viewModel = (activity as MainActivity).viewModel
         Log.e("Tech", "Tech is working")
         recyclerView.layoutManager = layoutManager
+        ProgressBar = view.findViewById(R.id.progresBar)
+        errorDialog = view.findViewById(R.id.SocketError)
+        SocketErrorButton = view.findViewById(R.id.refreshbutton)
 
-        // Setting recyclerViews adapter
-        //for the newsDatafordown add .slice(TOP_HEADLINES_COUNT until MainActivity.generalNews.size - TOP_HEADLINES_COUNT)
-//        newsDataForDownTech =
-//            MainActivity.TechNews.slice(Constants.TOP_HEADLINES_COUNT until MainActivity.TechNews.size - Constants.TOP_HEADLINES_COUNT)
+
         adapter = NewsAdapter()
         recyclerView.adapter = adapter
         adapter.differ.submitList( MainActivity.TechNews)
 
         Initialising_Dialog()
         RecyclerView_OnClickListener()
+        TechNewsObserver()
+    }
+
+    fun TechNewsObserver(){
+        Log.d("MainActivity"," General " )
+        viewModel.TechNews.observe(viewLifecycleOwner, Observer {
+            if(it is ErrorHandling.Success){
+                it.data?.let {
+                    adapter.differ.submitList(it.articles)
+                    ProgressBar.visibility = View.GONE
+                    recyclerView.visibility = View.VISIBLE
+                    errorDialog.visibility = View.GONE
+
+                }
+            }
+            else if (it is ErrorHandling.Error){
+                ProgressBar.visibility = View.GONE
+                recyclerView.visibility = View.GONE
+                errorDialog.visibility = View.VISIBLE
+                SocketErrorButton.setOnClickListener {
+                    Toast.makeText(requireActivity(),"Reloading Requests",Toast.LENGTH_LONG).show()
+
+                }
+            }
+        })
     }
 
     fun Initialising_Dialog() {
