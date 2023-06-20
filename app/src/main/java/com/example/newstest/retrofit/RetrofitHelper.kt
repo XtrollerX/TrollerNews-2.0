@@ -22,7 +22,7 @@ class RetrofitHelper {
         }
 
         val httpclient by lazy {
-            val builder1 = OkHttpClient.Builder().addInterceptor(logging).build()
+
 
             val builder = OkHttpClient.Builder()
 //                .connectTimeout(10,TimeUnit.MILLISECONDS). readTimeout(10, TimeUnit.MILLISECONDS)

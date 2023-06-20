@@ -9,6 +9,8 @@ import android.view.ViewGroup
 import android.widget.ImageButton
 import androidx.appcompat.widget.Toolbar
 import androidx.browser.customtabs.CustomTabsIntent
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.constraintlayout.widget.ConstraintSet.Constraint
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -38,6 +40,7 @@ class SavedFragment : Fragment(R.layout.fragment_saved) {
     lateinit var RecyclerView:RecyclerView
     lateinit var newsAdapter: NewsAdapter
     lateinit var viewModel: NewsViewModel
+    lateinit var isEmpty: ConstraintLayout
 
 
 
@@ -52,29 +55,21 @@ class SavedFragment : Fragment(R.layout.fragment_saved) {
         RecyclerView = view.findViewById(R.id.SavedNewsRecyclerView)
 
         newsAdapter = NewsAdapter()
-
-
-
         viewModel = (activity as MainActivity).viewModel
+        isEmpty = view.findViewById(R.id.emptyLayout)
 
+        //Setting up recyclerview
         SettingUpDialog_andRecyclerView()
-
         viewModel.getNewsFromDB()?.observe(viewLifecycleOwner, Observer { articles ->
             newsAdapter.differ.submitList(articles)
         })
 
+        //Setting up the right toolbar
         MainToolbar.visibility = View.GONE
         SecondaryToolBar.visibility = View.VISIBLE
-
         secondaryToolbarImageView = requireActivity().findViewById<ImageButton>(R.id.MenuBackButton)
-
-
         secondaryToolbarImageView.setOnClickListener {
-
             this.findNavController().navigate(R.id.action_global_viewPagingFragment)
-
-
-
         }
 
 
@@ -95,6 +90,7 @@ class SavedFragment : Fragment(R.layout.fragment_saved) {
                 val position = viewHolder.adapterPosition
                 val article = newsAdapter.differ.currentList[position]
                 viewModel.deleteNews(article)
+                isDatabaseEmpty()
 
                 Snackbar.make(view, "Successfully Deleted article", Snackbar.LENGTH_LONG).apply {
                     setAction("Undo") {
@@ -109,6 +105,18 @@ class SavedFragment : Fragment(R.layout.fragment_saved) {
             attachToRecyclerView(RecyclerView)
         }
         RecyclerView_OnClickListener()
+        isDatabaseEmpty()
+
+    }
+    fun isDatabaseEmpty(){
+        viewModel.IsDataEmpty()
+        viewModel.isDataBaseEmpty.observe(viewLifecycleOwner, Observer {
+            if(it == true){
+                isEmpty.visibility = View.VISIBLE
+            }else{
+                isEmpty.visibility = View.GONE
+            }
+        })
 
     }
 

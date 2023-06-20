@@ -29,18 +29,20 @@ import java.net.SocketTimeoutException
 
 
 class NewsRepository(val db:RoomDatabases ) {
-
+    //Insert news article to database
     suspend fun upsert(article: Article) = db.getArticleDao().upsert(article)
-
+    //Retrieving Saved News
     fun getSavedNews() = db.getArticleDao().getAllArticles()
-
+    //Deleting articles from Databsae
     suspend fun deleteArticle(article: Article) = db.getArticleDao().deleteArticle(article)
-
-
-
+    //Check if Database is empty
     suspend fun empty() = db.getArticleDao().isEmpty()
+    //Getting News from API
+    suspend fun getNews(Country:String, Category:String, ApiKey:String): Response<NewsDataFromJson>{
+        return NewsApiCall.api.getNews(Country, Category,ApiKey)
+    }
 
-    suspend fun nukeTable() = db.getArticleDao().nukeTable()
+
 
 
 

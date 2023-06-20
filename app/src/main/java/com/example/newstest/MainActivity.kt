@@ -46,6 +46,8 @@ import java.net.Socket
 import java.net.SocketTimeoutException
 
 class MainActivity : AppCompatActivity() {
+  lateinit var errorDialog:ConstraintLayout
+
     private val newsCategories = arrayOf(
         HOME, BUSINESS,
         ENTERTAINMENT, SCIENCE,
@@ -54,13 +56,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var FragmentContainer: FragmentContainerView
     lateinit var viewModel: NewsViewModel
 
-
     private lateinit var fragmentAdapter: FragmentAdapter
-
-
-
-
-
 
     private var totalRequestCount = 0
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -71,17 +67,15 @@ class MainActivity : AppCompatActivity() {
         val Maintoolbar: Toolbar = findViewById(R.id.MenuToolBar)
         val SecondaryToolbar: Toolbar = findViewById(R.id.topAppBarthesecond)
         val MenuSaved: ImageButton = findViewById(R.id.MenuSavedButton)
+        errorDialog = findViewById(R.id.InternetError)
 
         Maintoolbar.visibility = View.VISIBLE
         SecondaryToolbar.visibility = View.GONE
 
-
-
+        //Saved Menu
         MenuSaved.setOnClickListener {
             findNavController(R.id.nav_host_fragment).navigate(R.id.action_global_savedFragment)
-
         }
-
 
         FragmentContainer = findViewById(R.id.nav_host_fragment)
 
@@ -91,20 +85,17 @@ class MainActivity : AppCompatActivity() {
 
         supportActionBar?.setDisplayShowTitleEnabled(false)
 
-
-
-
-
         // Send request call for news data
         NewsInitiation()
 
+        //Check if internet is available
+        if(isNetworkAvailable(this) == false){
+            FragmentContainer.visibility = View.GONE
+            errorDialog.visibility = View.VISIBLE
+            MenuSaved.visibility = View.GONE
 
-
-
-
+        }
     }
-
-
 
     //Initiating Api Calls
     fun NewsInitiation() {
@@ -121,30 +112,29 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+        private fun isNetworkAvailable(context:Context): Boolean {
+        val connectivityManager =
+           context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
-
-
-
-
-
-
-
-
-
-
-
-
-    companion object{
-        //var generalNews changed from ArrayList<NewsModel>
-        var DoneLoading:Int = 0
-        var ScienceNews: MutableList<Article> = mutableListOf()
-        var EntertainmentNews: MutableList<Article> = mutableListOf()
-        var SportsNews: MutableList<Article> = mutableListOf()
-        var BusinessNews: MutableList<Article> = mutableListOf()
-        var HealthNews: MutableList<Article> = mutableListOf()
-        var GeneralNews: MutableList<Article> = mutableListOf()
-        var TechNews: MutableList<Article> = mutableListOf()
-        var errorMessage:String? = "error"
-        var isError = 0
+        // For 29 api or above
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            val capabilities =
+                connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
+                    ?: return false
+            return when {
+                capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
+                capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> true
+                capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
+                else -> false
+            }
+        } else {
+            // For below 29 api
+            if (connectivityManager.activeNetworkInfo != null && connectivityManager.activeNetworkInfo!!.isConnectedOrConnecting) {
+                return true
+            }
+        }
+        return false
     }
+
+
 }

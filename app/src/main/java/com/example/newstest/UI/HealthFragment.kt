@@ -56,6 +56,7 @@ class HealthFragment : Fragment(R.layout.fragment_health) {
 
     lateinit var errorDialog: ConstraintLayout
     lateinit var SocketErrorButton: Button
+    lateinit var errortext:TextView
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -66,6 +67,8 @@ class HealthFragment : Fragment(R.layout.fragment_health) {
         ProgressBar = view.findViewById(R.id.progresBar)
         errorDialog = view.findViewById(R.id.SocketError)
         SocketErrorButton = view.findViewById(R.id.refreshbutton)
+        errortext = view.findViewById(R.id.errortext)
+
 
 
         recyclerView = view.findViewById(R.id.recyclerView)
@@ -74,7 +77,7 @@ class HealthFragment : Fragment(R.layout.fragment_health) {
 
         adapter = NewsAdapter()
         recyclerView.adapter = adapter
-        adapter.differ.submitList(MainActivity.HealthNews)
+
 
         Initialising_Dialog()
         RecyclerView_OnClickListener()
@@ -97,8 +100,10 @@ class HealthFragment : Fragment(R.layout.fragment_health) {
                 ProgressBar.visibility = View.GONE
                 recyclerView.visibility = View.GONE
                 errorDialog.visibility = View.VISIBLE
+                errortext.setText(it.message)
                 SocketErrorButton.setOnClickListener {
                     Toast.makeText(requireActivity(),"Reloading Requests",Toast.LENGTH_LONG).show()
+                    viewModel.getNews("us", Constants.HEALTH, viewModel.HealthNews)
                 }
             }
         })

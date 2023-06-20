@@ -46,6 +46,7 @@ class EntertainmentFragment : Fragment(R.layout.fragment_entertainment) {
     private lateinit var Dialog: AppCompatImageButton
     private lateinit var bottomSheetDialog: BottomSheetDialog
     private lateinit var viewModel: NewsViewModel
+    lateinit var errortext:TextView
 
     //var newsDatafordown changed from List<NewsModel>
     private lateinit var newsDataForDown: List<Article>
@@ -68,11 +69,11 @@ class EntertainmentFragment : Fragment(R.layout.fragment_entertainment) {
         ProgressBar = view.findViewById(R.id.progresBar)
         errorDialog = view.findViewById(R.id.SocketError)
         SocketErrorButton = view.findViewById(R.id.refreshbutton)
+        errortext = view.findViewById(R.id.errortext)
 
 
         adapter = NewsAdapter()
         recyclerView.adapter = adapter
-        adapter.differ.submitList(MainActivity.EntertainmentNews)
         Initialising_Dialog()
         RecyclerView_OnClickListener()
         EntertainementNewsObserver()
@@ -94,8 +95,10 @@ class EntertainmentFragment : Fragment(R.layout.fragment_entertainment) {
                 ProgressBar.visibility = View.GONE
                 recyclerView.visibility = View.GONE
                 errorDialog.visibility = View.VISIBLE
+                errortext.setText(it.message)
                 SocketErrorButton.setOnClickListener {
                     Toast.makeText(requireActivity(),"Reloading Requests",Toast.LENGTH_LONG).show()
+                    viewModel.getNews("us", Constants.ENTERTAINMENT, viewModel.EntertainmentNews)
                 }
 
             }

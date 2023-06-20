@@ -7,6 +7,7 @@ import com.example.newstest.retrofit.Article
 
 @Dao
 interface Doa {
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsert(article: Article): Long //returns the id's of the article
 
