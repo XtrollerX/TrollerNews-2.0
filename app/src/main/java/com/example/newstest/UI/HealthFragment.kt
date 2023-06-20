@@ -102,6 +102,7 @@ class HealthFragment : Fragment(R.layout.fragment_health) {
                 errorDialog.visibility = View.VISIBLE
                 errortext.setText(it.message)
                 SocketErrorButton.setOnClickListener {
+                    errorDialog.visibility = View.GONE
                     Toast.makeText(requireActivity(),"Reloading Requests",Toast.LENGTH_LONG).show()
                     viewModel.getNews("us", Constants.HEALTH, viewModel.HealthNews)
                 }

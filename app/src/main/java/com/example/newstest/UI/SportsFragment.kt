@@ -98,6 +98,7 @@ class SportsFragment : Fragment(R.layout.fragment_sports) {
 
                 errortext.setText(it.message)
                 SocketErrorButton.setOnClickListener {
+                    errorDialog.visibility = View.GONE
                     Toast.makeText(requireActivity(),"Reloading Requests",Toast.LENGTH_LONG).show()
                     viewModel.getNews("us", Constants.SPORTS, viewModel.SportsNews)
                 }

@@ -98,6 +98,7 @@ class EntertainmentFragment : Fragment(R.layout.fragment_entertainment) {
                 errortext.setText(it.message)
                 SocketErrorButton.setOnClickListener {
                     Toast.makeText(requireActivity(),"Reloading Requests",Toast.LENGTH_LONG).show()
+                    errorDialog.visibility = View.GONE
                     viewModel.getNews("us", Constants.ENTERTAINMENT, viewModel.EntertainmentNews)
                 }
 
