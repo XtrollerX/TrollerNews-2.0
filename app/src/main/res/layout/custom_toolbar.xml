@@ -48,7 +48,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             style="@style/Titles"
-            android:text="DEEZNEWS"
+            android:text="TrollerNews"
             android:textSize="25dp"></TextView>
 
     </com.google.android.material.appbar.MaterialToolbar>

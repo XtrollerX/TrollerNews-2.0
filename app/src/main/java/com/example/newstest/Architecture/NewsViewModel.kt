@@ -94,6 +94,7 @@ class NewsViewModel(var NewsRepositorys:NewsRepository, app:Application) : Andro
 
             val responseFromApi = NewsRepositorys.getNews(country,
                 Category,
+                //This is a free API key, please use your own from NewsApi.ORG
                 "3af34c4172814610afe0a3e59dafafe4")
             NewsList.postValue(getNewsCall(responseFromApi))
 
