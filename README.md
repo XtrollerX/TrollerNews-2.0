@@ -20,9 +20,9 @@ The api key we are currently belongs to the free plan, hence it has a limited am
 <h2 align="left">Screenshots of the project</h2>
 
 
-![image](https://github.com/XtrollerX/TrollerNews-2.0/assets/67418036/25a471c0-c4db-473c-942c-8e5a3c71e726)
+![image](https://github.com/XtrollerX/TrollerNews-2.0/assets/67418036/285cf71f-a958-4135-9248-c153c7ffa169)
 
-![image](https://github.com/XtrollerX/TrollerNews-2.0/assets/67418036/97ca3cd2-4b5f-4b39-a3e2-6d37c4258c50)
+![image](https://github.com/XtrollerX/TrollerNews-2.0/assets/67418036/d31c725c-cfd8-4c05-a532-0b1584aa6006)
 
 ![image](https://github.com/XtrollerX/TrollerNews-2.0.0/assets/67418036/4bf2aab2-5e66-4768-8349-2070c1dcab4d)
 
