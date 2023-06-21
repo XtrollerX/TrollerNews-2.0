@@ -26,6 +26,7 @@ The api key we are currently belongs to the free plan, hence it has a limited am
 
 ![image](https://github.com/XtrollerX/TrollerNews-2.0.0/assets/67418036/4bf2aab2-5e66-4768-8349-2070c1dcab4d)
 
+
 <h2 align="left">Getting Started</h2>
 
 Simply navigate to the app folder -> first java file -> first com.example.newstest file -> Architecture -> NewsViewModel and change the API key to your personal one.
