@@ -48,21 +48,14 @@ import java.net.SocketTimeoutException
 class MainActivity : AppCompatActivity() {
   lateinit var errorDialog:ConstraintLayout
 
-    private val newsCategories = arrayOf(
-        HOME, BUSINESS,
-        ENTERTAINMENT, SCIENCE,
-        SPORTS, TECHNOLOGY, HEALTH
-    )
+
     private lateinit var FragmentContainer: FragmentContainerView
     lateinit var viewModel: NewsViewModel
 
-    private lateinit var fragmentAdapter: FragmentAdapter
-
-    private var totalRequestCount = 0
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        // Set Action Bar
+
 
         val Maintoolbar: Toolbar = findViewById(R.id.MenuToolBar)
         val SecondaryToolbar: Toolbar = findViewById(R.id.topAppBarthesecond)
@@ -80,7 +73,7 @@ class MainActivity : AppCompatActivity() {
         FragmentContainer = findViewById(R.id.nav_host_fragment)
 
         val newsRepository = NewsRepository(RoomDatabases(this))
-        val viewModelProviderFactory = NewsViewModelProviderFactory(Application(),newsRepository)
+        val viewModelProviderFactory = NewsViewModelProviderFactory(newsRepository)
         viewModel = ViewModelProvider(this, viewModelProviderFactory)[NewsViewModel::class.java]
 
         supportActionBar?.setDisplayShowTitleEnabled(false)
@@ -89,7 +82,7 @@ class MainActivity : AppCompatActivity() {
         NewsInitiation()
 
         //Check if internet is available
-        if(isNetworkAvailable(this) == false){
+        if(isInternetAvailable(this) == false){
             FragmentContainer.visibility = View.GONE
             errorDialog.visibility = View.VISIBLE
             MenuSaved.visibility = View.GONE
@@ -112,7 +105,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-        private fun isNetworkAvailable(context:Context): Boolean {
+        private fun isInternetAvailable(context:Context): Boolean {
         val connectivityManager =
            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 

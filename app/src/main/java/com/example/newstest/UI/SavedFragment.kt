@@ -60,7 +60,7 @@ class SavedFragment : Fragment(R.layout.fragment_saved) {
 
         //Setting up recyclerview
         SettingUpDialog_andRecyclerView()
-        viewModel.getNewsFromDB()?.observe(viewLifecycleOwner, Observer { articles ->
+        viewModel.NewsFromDatabase()?.observe(viewLifecycleOwner, Observer { articles ->
             newsAdapter.differ.submitList(articles)
         })
 

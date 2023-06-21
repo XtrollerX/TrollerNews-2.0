@@ -29,7 +29,7 @@ import retrofit2.Response
 import java.io.IOException
 import java.net.SocketTimeoutException
 
-class NewsViewModel(var NewsRepositorys:NewsRepository, app:Application) : AndroidViewModel(app) {
+class NewsViewModel(var NewsRepositorys:NewsRepository) : ViewModel() {
 
     val GeneralNews:MutableLiveData<ErrorHandling<NewsDataFromJson?>?> = MutableLiveData()
 
@@ -70,14 +70,13 @@ class NewsViewModel(var NewsRepositorys:NewsRepository, app:Application) : Andro
     NewsRepositorys.deleteArticle( news)}
 
    //Get news fromd atabase
-   fun getNewsFromDB(): LiveData<List<Article>>? {
+   fun NewsFromDatabase(): LiveData<List<Article>>? {
         var newsData = NewsRepositorys.getSavedNews()
         return newsData
     }
 
     //If the response has no ErrorException, provide a success response or a error response such as too many requests, etc
-    fun getNewsCall(response: Response<NewsDataFromJson>): ErrorHandling<NewsDataFromJson?> {
-        Log.d("ViewModel"," getNewsCall " )
+    fun CallingNews(response: Response<NewsDataFromJson>): ErrorHandling<NewsDataFromJson?> {
 
         when(response.code()){
             200 -> { val body = response.body()
@@ -91,21 +90,17 @@ class NewsViewModel(var NewsRepositorys:NewsRepository, app:Application) : Andro
 
     //If there is ErrorException handle it, for example SockettimeoutException
     suspend fun ErrorGetNewsCall(country: String, Category: String, NewsList:MutableLiveData<ErrorHandling<NewsDataFromJson?>?>){
-        Log.d("ViewModel"," ErrorGetNewsCall " )
         try{
-
-            val responseFromApi = NewsRepositorys.getNews(country,
+            val ApiResponse = NewsRepositorys.getNews(country,
                 Category,
                 //This is a free API key, please use your own from NewsApi.ORG
                 "3af34c4172814610afe0a3e59dafafe4")
-            NewsList.postValue(getNewsCall(responseFromApi))
+            NewsList.postValue(CallingNews(ApiResponse))
 
-        }catch (t:Throwable){
-            when(t){
+        }catch (Exceptions:Throwable){
+            when(Exceptions){
                 is IOException -> NewsList.postValue(ErrorHandling.Error("There is a network failure, please refresh the page!"))
                 else -> NewsList.postValue(ErrorHandling.Error("Conversion Error"))
-
-
             }
         }
     }
@@ -113,14 +108,12 @@ class NewsViewModel(var NewsRepositorys:NewsRepository, app:Application) : Andro
 
 
 
-
-
 class NewsViewModelProviderFactory(
-    val app: Application,
+
     val newsRepository: NewsRepository
 ) : ViewModelProvider.Factory {
 
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return NewsViewModel(newsRepository,app) as T
+        return NewsViewModel(newsRepository,) as T
     }
 }

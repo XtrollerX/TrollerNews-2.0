@@ -39,7 +39,7 @@ import com.example.newstest.retrofit.NewsModel
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.button.MaterialButton
 
-import com.squareup.picasso.Picasso
+
 import org.w3c.dom.Text
 
 class GeneralFragment : Fragment(R.layout.fragment_general) {
