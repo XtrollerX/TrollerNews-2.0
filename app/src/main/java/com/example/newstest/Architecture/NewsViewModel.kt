@@ -78,12 +78,14 @@ class NewsViewModel(var NewsRepositorys:NewsRepository, app:Application) : Andro
     //If the response has no ErrorException, provide a success response or a error response such as too many requests, etc
     fun getNewsCall(response: Response<NewsDataFromJson>): ErrorHandling<NewsDataFromJson?> {
         Log.d("ViewModel"," getNewsCall " )
-        if(response.isSuccessful){
-            val body = response.body()
 
-            return ErrorHandling.Success(body)
-        }else{
-            return ErrorHandling.Error(response.message())
+        when(response.code()){
+            200 -> { val body = response.body()
+            return ErrorHandling.Success(body)}
+            400 -> {return ErrorHandling.Error("Bad Request")}
+            401 -> {return ErrorHandling.Error("Your API key was missing from the request, or wasn't correct.")}
+            429 -> {return ErrorHandling.Error("Too many requests")}
+            else -> {return ErrorHandling.Error("Server error")}
         }
     }
 
