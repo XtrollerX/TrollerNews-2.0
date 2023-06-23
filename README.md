@@ -1,7 +1,7 @@
 # TrollerNews-2.0
 
-A News Application made using Kotlin and XML, the former being used to create the logic for the app to function and the latter being used to craete the application's UI. A good number of libraries 
-are used in the creation of the this application such as Room, Retrofit, Glide, Viewpaging to name a few. This app is currently fetching it's news data from NewsApi.ORG. The application also has an in-built local database to store news articles.
+A News Application made using Kotlin and XML, the former being used to create the logic for the app to function and the latter being used to create the application's UI. A good number of libraries 
+are used in the creation of this application such as Room, Retrofit, Glide, Viewpaging to name a few. This app is currently fetching it's news data from NewsApi.ORG. The application also has an in-built local database to store news articles.
 
 The api key we are currently belongs to the free plan, hence it has a limited amount of requests, it is recommended to get your own APi key from NewsApi.ORG when using this app.
 
